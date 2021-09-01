@@ -1,0 +1,1 @@
+sendwave-pants-docker@https://github.com/compyman/pants-docker/releases/download/v0.04/sendwave-pants-docker-0.4.tar.gz

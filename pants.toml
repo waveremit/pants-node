@@ -1,0 +1,17 @@
+
+[GLOBAL]
+pants_version="2.5.0"
+pythonpath = ["%(buildroot)s/pants_plugins"]
+backend_packages = [
+                 "pants.backend.python",
+                 "pants.backend.python.lint.docformatter",
+                 "pants.backend.python.lint.black",
+                 "pants.backend.python.lint.isort" ,
+                 "pants_node",
+                 ]
+
+[source]
+root_patterns = [
+              "/pants_plugins",
+              "/test_webpack",
+              ]

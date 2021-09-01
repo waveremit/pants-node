@@ -1,0 +1,16 @@
+python_library(
+    name="pants_node_library",
+    dependencies=["pants_plugins:pants"],
+)
+
+python_distribution(
+    name="pants_node",
+    dependencies=[":pants_node_library"],
+    provides=setup_py(
+        name="sendwave-pants-node",
+        version="0.01",
+        description="Pants Plugin to build node bundles",
+        author="compyman@compyman.net",
+    ),
+    setup_py_commands=["sdist", "bdist_wheel"],
+)
