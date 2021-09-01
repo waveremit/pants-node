@@ -18,7 +18,7 @@ from pants.engine.target import (Target, TransitiveTargets,
                                  TransitiveTargetsRequest)
 from pants.engine.unions import UnionMembership, UnionRule
 from .target import NodeLibrary, NodeLibrarySources, NodeProjectFieldSet
-
+import sendwave.pants_docker.docker_component
 logger = logging.getLogger(__name__)
 
 
