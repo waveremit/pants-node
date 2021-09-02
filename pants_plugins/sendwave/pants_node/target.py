@@ -33,7 +33,7 @@ class NodeProjectDependencies(Dependencies):
 
 class NodeArtifactPathsField(StringSequenceField):
     help = "the locations of generated files created by npm run-script pants:build, required for ./pants package to work"
-    alias = "output_paths"
+    alias = "artifact_paths"
     required = True
 
 
@@ -53,7 +53,7 @@ class NodeProjectFieldSet(PackageFieldSet):
     required_fields = (NodeProjectDependencies, NodeArtifactPathsField)
     dependencies: NodeProjectDependencies
     artifact_paths: NodeArtifactPathsField
-    OutputPathField
+    output_path: OutputPathField
 
 
 def rules():

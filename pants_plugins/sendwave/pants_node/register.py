@@ -1,5 +1,5 @@
-import pants_node.package as package
-import pants_node.target as target
+import sendwave.pants_node.package as package
+import sendwave.pants_node.target as target
 
 
 def rules():

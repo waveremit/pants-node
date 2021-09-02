@@ -18,7 +18,7 @@ from pants.engine.target import (Target, TransitiveTargets,
                                  TransitiveTargetsRequest)
 from pants.engine.unions import UnionMembership, UnionRule
 from .target import NodeLibrary, NodeLibrarySources, NodeProjectFieldSet
-import sendwave.pants_docker.docker_component
+from  sendwave.pants_docker.docker_component import DockerComponent, DockerComponentFieldSet
 logger = logging.getLogger(__name__)
 
 
@@ -27,7 +27,7 @@ class PackageFileRequest:
     package_root: str
 
 
-@rule()
+@rule
 async def get_npm_package_files(request: PackageFileRequest) -> Digest:
     project_root = PurePath(request.package_root)
     package_json_path = project_root.joinpath("package.json")
@@ -55,7 +55,7 @@ class NodeSourceFilesRequest:
     package_address: str
 
 
-@rule()
+@rule
 async def get_node_package_file_sources(
     request: NodeSourceFilesRequest,
 ) -> StrippedSourceFiles:
@@ -71,7 +71,7 @@ async def get_node_package_file_sources(
     return source_files
 
 
-@rule()
+@rule
 async def get_node_package_digest(field_set: NodeProjectFieldSet) -> Digest:
     artifact_paths = field_set.artifact_paths.value
     package_files, source_files, nvm_bin = await MultiGet(
@@ -126,26 +126,36 @@ async def get_node_package_digest(field_set: NodeProjectFieldSet) -> Digest:
         ),
     )
     logger.debug(proc.stdout)
+    if field_set.output_path:
+        return await Get(Digest, AddPrefix(proc.output_digest, field_set.output_path.value))
     return proc.output_digest
 
 
-@rule()
+@rule
 async def node_project_package(
     field_set: NodeProjectFieldSet,
 ) -> BuiltPackage:
     """"""
-    package = await Get(Digest, NodeProjectFieldSet, field_set)
-    output = await Get(Snapshot, AddPrefix(package, field_set.address.spec_path))
+    package = await Get(Snapshot, NodeProjectFieldSet, field_set)
     return BuiltPackage(
-        digest=output.digest,
-        artifacts=tuple(BuiltPackageArtifact(f) for f in output.files),
+        digest=package.digest,
+        artifacts=tuple(BuiltPackageArtifact(f) for f in package.files),
     )
 
+
+@rule
+async def node_project_docker(
+        field_set: NodeProjectFieldSet,
+) -> DockerComponent:
+    """"""
+    package = await Get(Digest, NodeProjectFieldSet, field_set)
+    return DockerComponent(sources=package, commands=[])
 
 def rules():
     """Return the pants rules for this module."""
     return [
         UnionRule(NodeProjectFieldSet, NodeProjectFieldSet),
+        UnionRule(DockerComponentFieldSet, NodeProjectFieldSet),
         *collect_rules(),
 
     ]
