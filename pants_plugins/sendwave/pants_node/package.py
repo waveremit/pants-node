@@ -60,7 +60,7 @@ async def get_node_package_file_sources(
     request: NodeSourceFilesRequest,
 ) -> StrippedSourceFiles:
     transitive_targets = await Get(
-        TransitiveTargets, TransitiveTargetsRequest([request.package_address])
+       TransitiveTargets, TransitiveTargetsRequest([request.package_address])
     )
     all_sources = [
         t.get(NodeLibrarySources)
@@ -104,7 +104,6 @@ async def get_node_package_digest(field_set: NodeProjectFieldSet) -> Digest:
         Process(
             argv=[npm_paths.first_path.path, "install"],
             output_directories=["./node_modules"],
-            output_files=["npm-shrinkwrap.json", "./package-lock.json", "yarn.lock"],
             input_digest=build_context.digest,
             env={"PATH": ":".join(search_path)},
             description="installing node project dependencies",
