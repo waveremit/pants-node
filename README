@@ -1,0 +1,47 @@
+# Pants Node
+Version 0.01
+
+This package contains a plugin for the pants build system [0] to run npm based build scripts from pants build targets
+
+### Requirements
+
+This plugin supports the current stable version of pants (2.6)  and requires python 3.9 to be installed. It also requires the pants-docker plugin [1] so that `npm_package`s may be included as dependencies to docker images
+
+### Installation
+
+To use this plugin in your existing pants project add it to the plugins entry & add to the backend_packages entry in your pants.toml as below,
+
+```
+[GLOBAL]
+plugins = ["sendwave-pants-node@https://GITHUB_RELEASE_URL"]
+backend_packages = ["sendwave.pants_node"]
+```
+
+### Usage
+
+This plugin adds two new targets to pants,
+* node_library which is analogous to python library and should contain all javascript, css, html, svg, etc etc files that will need to be operated on by your npm command. You can include all files in one node_library target or add other node_library targets as dependencicies. Unfortunately this does not hook into the `pants tailor`  command nor dependency tracking so you will need to manually specify dependencies or create single monster target
+
+* node_package, which should have a list of node_library dependencies, and a list of `artifact_paths`, and should be located in the same directory as your package.json & lock file, these will be automatically included in the build.
+
+The plugin will attempt to find your currently installed version of node and npm by searching your '/bin/`, `/usr/bin/` and `/usr/local/bin` paths as well as the value of the NVM_BIN environment variable.
+
+It will install all dependencies as specified by the package.json file and constrainted by the lock file.
+Then it will run the npm script specified by the "pants:build" key in the context of all node_library source files.
+
+All files under the `artifact_paths` will then be output in the pants-distdir (default `dist/`).
+
+You may include the built files in a `docker()` build target by including them as dependencies as normal
+
+NOTE:
+
+Please make sure you have generated a package.lock file in order to have reproducable builds, you may generate one by running:
+
+npm i --package-lock-only
+
+### LICENSE
+See COPYING for the text of the Apache License which this package is released under 
+
+
+[0] https://www.pantsbuild.org/
+[1] https://github.com/compyman/pants-docker
