@@ -8,6 +8,7 @@ workflows:
     jobs:
       - build-plugin-wheel
 
+
 commands:
   setup-pants:
     description: "Setup pants build tool"
@@ -32,9 +33,8 @@ commands:
       - save_cache:
           key: v0-pants_cache-{{ arch }}--{{ .Branch }}-{{ .Revision }}
           paths:
-            - ~/.cache/pants/setup
-            - ~/.cache/pants/named_cache
-            - ~/.cache/pants/lmdb_caches
+            - ~/.cache/pants
+
 jobs:
   build-plugin-wheel:
     environment:
