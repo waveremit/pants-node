@@ -8,9 +8,11 @@ python_distribution(
     dependencies=[":pants_node_library"],
     provides=setup_py(
         name="sendwave-pants-node",
-        version="0.01",
+        version="1.0",
         description="Pants Plugin to build node bundles",
         author="compyman@compyman.net",
     ),
-    setup_py_commands=["sdist", "bdist_wheel"],
+    sdist=True,
+    wheel=True,
+
 )
