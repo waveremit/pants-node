@@ -15,6 +15,7 @@ from pants.engine.unions import UnionRule
 
 class NodeLibrarySourcesField(SourcesField):
     default = ("*.js", "*.css", "*.html")
+    alias = "file_extensions"
 
 
 class NodeLibrary(Target):
