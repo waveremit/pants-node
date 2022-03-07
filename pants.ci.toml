@@ -3,7 +3,7 @@ dynamic_ui = false
 # Ensure colors are used (if your CI provider supports it). 
 colors = true
 
-[python-setup]
+[python]
 # Limit the maximum number of concurrent jobs used to resolve third
 # party dependencies. The max level of parallelism will be
 # `process_execution_local_parallelism x resolver_jobs`, but 
