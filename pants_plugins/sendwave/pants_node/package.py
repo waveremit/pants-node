@@ -46,7 +46,7 @@ async def get_npm_package_files(request: PackageFileRequest) -> Digest:
             ]
         ),
     )
-    unrooted_configs = await Get(Digest, RemovePrefix(rooted_configs, project_root))
+    unrooted_configs = await Get(Digest, RemovePrefix(rooted_configs, project_root.name))
     return unrooted_configs
 
 
@@ -125,7 +125,7 @@ async def get_node_package_digest(field_set: NodeProjectFieldSet) -> Digest:
         ),
     )
     logger.debug(proc.stdout)
-    if field_set.output_path:
+    if field_set.output_path and field_set.output_path.value is not None:
         return await Get(Digest, AddPrefix(proc.output_digest, field_set.output_path.value))
     return proc.output_digest
 
