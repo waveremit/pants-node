@@ -14,6 +14,7 @@ from pants.engine.unions import UnionRule
 
 
 class NodeLibrarySourcesField(SourcesField):
+    help = "File extensions that should be bundled by webpack"
     default = ("*.js", "*.css", "*.html")
     alias = "file_extensions"
 
