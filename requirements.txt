@@ -1,1 +1,1 @@
-sendwave-pants-docker@https://6-463230233-gh.circle-artifacts.com/0/dist/sendwave-pants-docker-1.0.tar.gz
+sendwave-pants-docker@https://github.com/waveremit/pants-docker/releases/download/v1.0/sendwave-pants-docker-1.0.tar.gz
