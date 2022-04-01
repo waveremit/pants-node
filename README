@@ -1,11 +1,11 @@
 # Pants Node
-Version 0.01
+Version 1.0
 
 This package contains a plugin for the pants build system [0] to run npm based build scripts from pants build targets
 
 ### Requirements
 
-This plugin supports the current stable version of pants (2.6)  and requires python 3.9 to be installed. It also requires the pants-docker plugin [1] so that `npm_package`s may be included as dependencies to docker images
+This plugin supports the current stable version of pants (2.9)  and requires python 3.9 to be installed. It also requires the pants-docker plugin [1] so that `npm_package`s may be included as dependencies to docker images
 
 ### Installation
 

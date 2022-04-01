@@ -6,14 +6,15 @@ from pants.core.goals.package import (BuiltPackage, BuiltPackageArtifact,
 from pants.engine.target import (COMMON_TARGET_FIELDS, Dependencies,
                                  DependenciesRequest, DescriptionField,
                                  HydratedSources, HydrateSourcesRequest,
-                                 Sources, SpecialCasedDependencies,
+                                 MultipleSourcesField, SpecialCasedDependencies,
                                  StringField, StringSequenceField, Tags,
                                  Target, Targets, TransitiveTargets,
                                  TransitiveTargetsRequest)
 from pants.engine.unions import UnionRule
 
 
-class NodeLibrarySources(Sources):
+class NodeLibrarySourcesField(MultipleSourcesField):
+    help = "File extensions that should be bundled by webpack"
     default = ("*.js", "*.css", "*.html")
 
 
@@ -23,7 +24,7 @@ class NodeLibrary(Target):
     core_fields = (
         *COMMON_TARGET_FIELDS,
         Dependencies,
-        NodeLibrarySources,
+        NodeLibrarySourcesField,
     )
 
 

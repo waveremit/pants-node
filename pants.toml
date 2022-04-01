@@ -1,12 +1,13 @@
 
 [GLOBAL]
-pants_version="2.6.0"
+pants_version="2.9.0"
 pythonpath = ["%(buildroot)s/pants_plugins"]
 plugins = [
-   "sendwave-pants-docker@https://github.com/compyman/pants-docker/releases/download/v0.05/sendwave-pants-docker-0.5.tar.gz"
+   "sendwave-pants-docker@https://github.com/waveremit/pants-docker/releases/download/v1.0/sendwave-pants-docker-1.0.tar.gz"
 ]
 
 backend_packages = [
+                 "pants.backend.plugin_development",
                  "pants.backend.python",
                  "pants.backend.python.lint.docformatter",
                  "pants.backend.python.lint.black",

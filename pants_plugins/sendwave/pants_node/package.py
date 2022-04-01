@@ -2,7 +2,7 @@ import logging
 from dataclasses import dataclass
 from pathlib import PurePath
 
-from pants.core.goals.package import BuiltPackage, BuiltPackageArtifact
+from pants.core.goals.package import BuiltPackage, BuiltPackageArtifact, PackageFieldSet
 from pants.core.util_rules.external_tool import (DownloadedExternalTool,
                                                  ExternalToolRequest)
 from pants.core.util_rules.source_files import SourceFiles, SourceFilesRequest
@@ -17,7 +17,7 @@ from pants.engine.rules import Get, MultiGet, collect_rules, rule
 from pants.engine.target import (Target, TransitiveTargets,
                                  TransitiveTargetsRequest)
 from pants.engine.unions import UnionMembership, UnionRule
-from .target import NodeLibrary, NodeLibrarySources, NodeProjectFieldSet
+from .target import NodeLibrary, NodeLibrarySourcesField, NodeProjectFieldSet
 from  sendwave.pants_docker.docker_component import DockerComponent, DockerComponentFieldSet
 logger = logging.getLogger(__name__)
 
@@ -46,7 +46,7 @@ async def get_npm_package_files(request: PackageFileRequest) -> Digest:
             ]
         ),
     )
-    unrooted_configs = await Get(Digest, RemovePrefix(rooted_configs, project_root))
+    unrooted_configs = await Get(Digest, RemovePrefix(rooted_configs, project_root.name))
     return unrooted_configs
 
 
@@ -63,9 +63,9 @@ async def get_node_package_file_sources(
        TransitiveTargets, TransitiveTargetsRequest([request.package_address])
     )
     all_sources = [
-        t.get(NodeLibrarySources)
+        t.get(NodeLibrarySourcesField)
         for t in transitive_targets.closure
-        if t.has_field(NodeLibrarySources)
+        if t.has_field(NodeLibrarySourcesField)
     ]
     source_files = await Get(StrippedSourceFiles, SourceFilesRequest(all_sources))
     return source_files
@@ -125,7 +125,7 @@ async def get_node_package_digest(field_set: NodeProjectFieldSet) -> Digest:
         ),
     )
     logger.debug(proc.stdout)
-    if field_set.output_path:
+    if field_set.output_path and field_set.output_path.value is not None:
         return await Get(Digest, AddPrefix(proc.output_digest, field_set.output_path.value))
     return proc.output_digest
 
@@ -153,7 +153,7 @@ async def node_project_docker(
 def rules():
     """Return the pants rules for this module."""
     return [
-        UnionRule(NodeProjectFieldSet, NodeProjectFieldSet),
+        UnionRule(PackageFieldSet, NodeProjectFieldSet),
         UnionRule(DockerComponentFieldSet, NodeProjectFieldSet),
         *collect_rules(),
 
