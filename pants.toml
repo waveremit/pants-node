@@ -20,6 +20,7 @@ backend_packages = [
 root_patterns = [
               "/pants_plugins",
               "/test_webpack",
+              "/test_app_root",
               ]
 
 
