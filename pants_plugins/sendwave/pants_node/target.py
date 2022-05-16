@@ -38,6 +38,13 @@ class NodeArtifactPathsField(StringSequenceField):
     required = True
 
 
+class NodeAppRootField(StringField):
+    help = "The relative path to your app root (where package.json and lockfiles live)"
+    alias = "app_root"
+    required = False
+    default = "."
+
+
 class NodePackage(Target):
     help = "Package together your Node libraries into a bundle! Who knows how js development works"
     alias = "node_package"
@@ -45,6 +52,7 @@ class NodePackage(Target):
         *COMMON_TARGET_FIELDS,
         NodeProjectDependencies,
         NodeArtifactPathsField,
+        NodeAppRootField,
         OutputPathField,
     )
 
@@ -54,6 +62,7 @@ class NodeProjectFieldSet(PackageFieldSet):
     required_fields = (NodeProjectDependencies, NodeArtifactPathsField)
     dependencies: NodeProjectDependencies
     artifact_paths: NodeArtifactPathsField
+    app_root: NodeAppRootField
     output_path: OutputPathField
 
 

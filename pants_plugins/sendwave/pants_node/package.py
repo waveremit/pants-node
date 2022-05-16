@@ -75,7 +75,7 @@ async def get_node_package_file_sources(
 async def get_node_package_digest(field_set: NodeProjectFieldSet) -> Digest:
     artifact_paths = field_set.artifact_paths.value
     package_files, source_files, nvm_bin = await MultiGet(
-        Get(Snapshot, PackageFileRequest(field_set.address.spec_path)),
+        Get(Snapshot, PackageFileRequest(field_set.app_root.value)),
         Get(StrippedSourceFiles, NodeSourceFilesRequest(field_set.address)),
         Get(Environment, EnvironmentRequest(["NVM_BIN"])),
     )

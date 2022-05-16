@@ -22,7 +22,7 @@ backend_packages = ["sendwave.pants_node"]
 This plugin adds two new targets to pants,
 * node_library which is analogous to python library and should contain all javascript, css, html, svg, etc etc files that will need to be operated on by your npm command. You can include all files in one node_library target or add other node_library targets as dependencicies. Unfortunately this does not hook into the `pants tailor`  command nor dependency tracking so you will need to manually specify dependencies or create single monster target
 
-* node_package, which should have a list of node_library dependencies, and a list of `artifact_paths`, and should be located in the same directory as your package.json & lock file, these will be automatically included in the build.
+* node_package, which should have a list of node_library dependencies, a list of `artifact_paths`, and optionally an `app_root` pointing to the subdirectory where your package.json and lockfiles live (defaults to `"."`). These will be automatically included in the build.
 
 The plugin will attempt to find your currently installed version of node and npm by searching your '/bin/`, `/usr/bin/` and `/usr/local/bin` paths as well as the value of the NVM_BIN environment variable.
 

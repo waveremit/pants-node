@@ -5,6 +5,7 @@ node_package(
     name = 'test_bundle',
     dependencies=[":test_webpack"],
     artifact_paths=["public/bundle"],
+    app_root="test_webpack",
     output_path="output",
 )
 
