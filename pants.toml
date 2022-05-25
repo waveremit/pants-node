@@ -15,13 +15,14 @@ backend_packages = [
                  "sendwave.pants_node",
                  "sendwave.pants_docker"
                  ]
-
 [source]
-root_patterns = [
-              "/pants_plugins",
-              "/test_webpack",
-              ]
+root_patterns = ["/pants_plugins", "/test_webpack"]
 
+[node]
+use_nvm = true
+
+[python]
+interpreter_constraints = [">=3.9"]
 
 [anonymous-telemetry]
 enabled = true
