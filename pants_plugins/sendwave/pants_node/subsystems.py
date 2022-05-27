@@ -33,14 +33,14 @@ class NodeSubsystem(Subsystem):
             type=list,
             member_type=str,
             default=["/bin", "/usr/bin/"],
-            help="Directories in which to search for node binaries.'"
+            help="Directories in which to search for node binaries.'",
         )
         register(
             "--use-nvm",
             type=bool,
             default=True,
             help="If true, the value of $NVM_BIN will be "
-            "appended to the front of the search path."
+            "appended to the front of the search path.",
         )
 
 

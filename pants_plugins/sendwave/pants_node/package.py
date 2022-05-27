@@ -7,29 +7,28 @@ normal `pants package` calls, or included in a docker container, by
 making the node_package target a dependency of the docker target.
 """
 import logging
+from dataclasses import dataclass
 from pathlib import PurePath
 from typing import Tuple
-from dataclasses import dataclass
-from pants.core.goals.package import (BuiltPackage,
-                                      BuiltPackageArtifact,
+
+from pants.core.goals.package import (BuiltPackage, BuiltPackageArtifact,
                                       PackageFieldSet)
 from pants.core.util_rules.source_files import SourceFiles, SourceFilesRequest
 from pants.engine.environment import Environment, EnvironmentRequest
-from pants.engine.fs import (AddPrefix, Digest, DigestEntries,
-                             CreateDigest, MergeDigests, RemovePrefix,
-                             Snapshot, FileEntry)
+from pants.engine.fs import (AddPrefix, CreateDigest, Digest, DigestEntries,
+                             FileEntry, MergeDigests, RemovePrefix, Snapshot)
 from pants.engine.process import (BinaryPathRequest, BinaryPaths, Process,
                                   ProcessResult)
-from pants.source.source_root import SourceRootsRequest, SourceRootsResult
-from pants.engine.rules import Get,  collect_rules, rule
-from pants.engine.target import (TransitiveTargets, Address,
+from pants.engine.rules import Get, collect_rules, rule
+from pants.engine.target import (Address, TransitiveTargets,
                                  TransitiveTargetsRequest)
 from pants.engine.unions import UnionRule
-from .target import NodeLibrarySourcesField, NodeProjectFieldSet
+from pants.source.source_root import SourceRootsRequest, SourceRootsResult
 from sendwave.pants_docker.docker_component import (DockerComponent,
                                                     DockerComponentFieldSet)
 from sendwave.pants_node.subsystems import NodeSubsystem
 
+from .target import NodeLibrarySourcesField, NodeProjectFieldSet
 
 logger = logging.getLogger(__name__)
 
@@ -64,9 +63,9 @@ async def strip_source_roots(snapshot_to_strip: StripSourceRoots) -> Digest:
             file_paths.append(path)
         else:
             dir_paths.append(path)
-    root_result = await Get(SourceRootsResult,
-                            SourceRootsRequest(files=file_paths,
-                                               dirs=dir_paths))
+    root_result = await Get(
+        SourceRootsResult, SourceRootsRequest(files=file_paths, dirs=dir_paths)
+    )
     roots = root_result.path_to_root
     roots_to_entries = {root: [] for (files, root) in roots.items()}
 
@@ -79,9 +78,7 @@ async def strip_source_roots(snapshot_to_strip: StripSourceRoots) -> Digest:
         # create a separate digest for each source root
         digest = await Get(Digest, CreateDigest(entries))
         # remove the source root from the digest
-        stripped_digests.append(
-            (await Get(Digest, RemovePrefix(digest, root.path)))
-        )
+        stripped_digests.append((await Get(Digest, RemovePrefix(digest, root.path))))
     # merge the digests together together
     return await Get(Digest, MergeDigests(stripped_digests))
 
@@ -107,14 +104,15 @@ class NPMPath:
 
 
 @rule
-async def get_node_search_paths(request: NPMPathRequest,
-                                node: NodeSubsystem) -> NPMPath:
+async def get_node_search_paths(
+    request: NPMPathRequest, node: NodeSubsystem
+) -> NPMPath:
     """Build NPMPath object from NodeSubsystem configuration."""
     use_nvm = node.options.use_nvm
     if use_nvm:
         nvm_bin = await Get(Environment, EnvironmentRequest(["NVM_BIN"]))
         if nvm_bin:
-            search_paths = (([nvm_bin["NVM_BIN"], *node.options.search_paths]))
+            search_paths = [nvm_bin["NVM_BIN"], *node.options.search_paths]
     else:
         search_paths = tuple(node.options.search_paths)
 
@@ -126,10 +124,10 @@ async def get_node_search_paths(request: NPMPathRequest,
         ),
     )
     if not npm_paths.first_path:
-        raise ValueError("Could not find npm in: ({}) cannot create package"
-                         .format(search_paths))
-    return NPMPath(binary_path=npm_paths.first_path.path,
-                   search_paths=search_paths)
+        raise ValueError(
+            "Could not find npm in: ({}) cannot create package".format(search_paths)
+        )
+    return NPMPath(binary_path=npm_paths.first_path.path, search_paths=search_paths)
 
 
 @dataclass(frozen=True)
@@ -140,12 +138,10 @@ class NodeSourceFilesRequest:
 
 
 @rule
-async def get_node_package_file_sources(
-        request: NodeSourceFilesRequest
-) -> SourceFiles:
+async def get_node_package_file_sources(request: NodeSourceFilesRequest) -> SourceFiles:
     """Transitively looks up all source files for the node package."""
     transitive_targets = await Get(
-       TransitiveTargets, TransitiveTargetsRequest([request.package_address])
+        TransitiveTargets, TransitiveTargetsRequest([request.package_address])
     )
     all_sources = [
         t.get(NodeLibrarySourcesField)
@@ -199,19 +195,18 @@ async def get_node_package_digest(field_set: NodeProjectFieldSet) -> Digest:
     """
     package_root = field_set.address.spec_path
     artifact_paths = field_set.artifact_paths.value
-    source_files = await Get(SourceFiles,
-                             NodeSourceFilesRequest(field_set.address))
-    stripped_files = await Get(Snapshot,
-                               RemovePrefix(
-                                   source_files.snapshot.digest,
-                                   package_root
-                               ))
+    source_files = await Get(SourceFiles, NodeSourceFilesRequest(field_set.address))
+    stripped_files = await Get(
+        Snapshot, RemovePrefix(source_files.snapshot.digest, package_root)
+    )
     node_paths = await Get(NPMPath, NPMPathRequest())
     npm_path = node_paths.binary_path
     search_path = ":".join(node_paths.search_paths)
-    logger.info("Using npm at {npm_path} ($PATH={search_paths})"
-                .format(npm_path=npm_path,
-                        search_paths=node_paths.search_paths))
+    logger.info(
+        "Using npm at {npm_path} ($PATH={search_paths})".format(
+            npm_path=npm_path, search_paths=node_paths.search_paths
+        )
+    )
     npm_install_result = await Get(
         ProcessResult,
         Process(
@@ -224,8 +219,7 @@ async def get_node_package_digest(field_set: NodeProjectFieldSet) -> Digest:
     )
     log_console_output(npm_install_result.stdout)
     build_context = await Get(
-        Digest, MergeDigests([stripped_files.digest,
-                              npm_install_result.output_digest])
+        Digest, MergeDigests([stripped_files.digest, npm_install_result.output_digest])
     )
     build_result = await Get(
         ProcessResult,
@@ -239,19 +233,16 @@ async def get_node_package_digest(field_set: NodeProjectFieldSet) -> Digest:
     )
     log_console_output(build_result.stdout)
     if field_set.output_path and field_set.output_path.value is not None:
-        return await Get(Digest,
-                         AddPrefix(build_result.output_digest,
-                                   field_set.output_path.value))
+        return await Get(
+            Digest, AddPrefix(build_result.output_digest, field_set.output_path.value)
+        )
     else:
-        output = await Get(Digest, AddPrefix(build_result.output_digest,
-                                             package_root))
+        output = await Get(Digest, AddPrefix(build_result.output_digest, package_root))
         return await Get(Digest, StripSourceRoots(digest=output))
 
 
 @rule
-async def node_project_package(
-        field_set: NodeProjectFieldSet
-) -> BuiltPackage:
+async def node_project_package(field_set: NodeProjectFieldSet) -> BuiltPackage:
     """Build a node_package target into a BuiltPackage."""
     package = await Get(Snapshot, NodeProjectFieldSet, field_set)
     return BuiltPackage(
@@ -261,9 +252,7 @@ async def node_project_package(
 
 
 @rule
-async def node_project_docker(
-        field_set: NodeProjectFieldSet
-) -> DockerComponent:
+async def node_project_docker(field_set: NodeProjectFieldSet) -> DockerComponent:
     """Build a node_package target into a DockerComponent.
 
     This allows files generated by the node process to be included in
@@ -279,5 +268,4 @@ def rules():
         UnionRule(PackageFieldSet, NodeProjectFieldSet),
         UnionRule(DockerComponentFieldSet, NodeProjectFieldSet),
         *collect_rules(),
-
     ]
