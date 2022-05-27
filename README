@@ -20,18 +20,22 @@ backend_packages = ["sendwave.pants_node"]
 ### Usage
 
 This plugin adds two new targets to pants,
-* node_library which is analogous to python library and should contain all javascript, css, html, svg, etc etc files that will need to be operated on by your npm command. You can include all files in one node_library target or add other node_library targets as dependencicies. Unfortunately this does not hook into the `pants tailor`  command nor dependency tracking so you will need to manually specify dependencies or create single monster target
+* node_library: analogous to python library must contain all javascript, css, html, svg, etc etc files in its `sources` field. You can include all files in one node_library target or add other node_library targets as dependencicies. Unfortunately this does not hook into the `pants tailor`  command nor dependency tracking so you will need to manually specify dependencies or create single monster target
 
-* node_package, which should have a list of node_library dependencies, and a list of `artifact_paths`, and should be located in the same directory as your package.json & lock file, these will be automatically included in the build.
+* node_package, which should have a list of node_library dependencies, and a list of `artifact_paths`, those paths will be extracted from the build chroot & included in the package output.  NOTE: the package(-lock).json for your package must be included as a source file in one of the node_libary targets your node_package target depends on.
 
-The plugin will attempt to find your currently installed version of node and npm by searching your '/bin/`, `/usr/bin/` and `/usr/local/bin` paths as well as the value of the NVM_BIN environment variable.
+The plugin will attempt to find your currently installed version of node and npm by searching your '/bin/`, `/usr/bin/` paths as well as the value of the NVM_BIN environment variable, this behavior is configurable in the `[node]` scope of your pants.toml & via command line options. run `pants help node` for more information.
 
-It will install all dependencies as specified by the package.json file and constrainted by the lock file.
-Then it will run the npm script specified by the "pants:build" key in the context of all node_library source files.
+It will install all dependencies as specified by the package.json file and constrainted by the lock file (again: these must be included in a node_libary target!).
+Then it will run the npm script specified by the "pants:build" key in the context of all node_library source files. NOTE: due to how symlinks are handled in pants process output_digests you will not be able to reference the symlinked executable - the "pants:build" script should use node directly to evaluate the appropriate javascript file.
+Example:
+instead of "pants:build": "nuxt build" use "pants:build": "node node_modules/nuxt/bin/nuxt.js"
+
+For more information reference this github comment: https://github.com/pantsbuild/pants/pull/15211#issuecomment-1135155501
 
 All files under the `artifact_paths` will then be output in the pants-distdir (default `dist/`).
 
-You may include the built files in a `docker()` build target by including them as dependencies as normal
+You may include the built files in a `docker()` build target by including the node_package targets as dependencies to the docker target.
 
 NOTE:
 
@@ -40,7 +44,7 @@ Please make sure you have generated a package.lock file in order to have reprodu
 npm i --package-lock-only
 
 ### LICENSE
-See COPYING for the text of the Apache License which this package is released under 
+See COPYING for the text of the Apache License, which governs this package.
 
 
 [0] https://www.pantsbuild.org/
