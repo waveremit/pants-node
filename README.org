@@ -1,0 +1,140 @@
+#+TITLE:       Sendwave Pants Node Plugin
+#+AUTHOR:      Nathan Rosenbloom, Jean Cochrane
+#+EMAIL:       engineering@sendwave.com
+#+DESCRIPTION: Node Plugin Documentation
+
+* Version 1.1.0
+
+This package contains a plugin for the [[https://www.pantsbuild.org/][pants build system]] to run npm
+based scripts from pants build targets
+
+*  Requirements
+
+This plugin supports pantsbuild 2.9 and requires python >=3.9 to be
+installed. It also requires the [[https://github.com/compyman/pants-docker][pants-docker plugin]] so that a
+=npm_package= may be included as dependencies to docker
+images
+
+* Installation
+
+To use this plugin in your existing pants project add it to the
+plugins entry & add to the =backend_packages= entry in your =pants.toml=
+as below,
+
+#+NAME: pants.toml
+#+BEGIN_SRC: toml
+[GLOBAL]
+plugins = ["sendwave-pants-node@https://GITHUB_RELEASE_URL"]
+backend_packages = ["sendwave.pants_node"]
+#+END_SRC
+
+* Usage
+
+This plugin adds two new targets to pants,
+- =node_library= analogous to the builtin =python library= target;
+  must contain all javascript, css, html, svg, etc etc files in its
+  =sources= field. You can include all files in one =node_library=
+  target or add other =node_library= targets as
+  dependencicies. Unfortunately this does not hook into the =./pants
+  tailor= command nor dependency tracking so you will need to manually
+  specify dependencies or create asingle monster target
+- =node_package=, which should have a list of =node_library=
+  dependencies, and a list of =artifact_paths=, those paths will be
+  extracted from the build chroot & included in the package output.
+  NOTE: the =package(-lock).json= for your package must be included as
+  a source file in one of the =node_libary= targets the =node_package=
+  target depends on.
+
+The plugin will attempt to find your currently installed version of
+node and npm by searching your =/bin/:/usr/bin/= paths as well as the
+value of the =NVM_BIN= environment variable, this behavior is
+configurable in the =[node]= scope of your =pants.toml= & via command
+line options. run =pants help node= for more information.
+
+It will install all dependencies as specified by the =package.json=
+file and constrainted by the lock file (again: these must be included
+in a =node_libary= target!).  Then it will run the npm script
+specified by the =pants:build= key in the context of all
+=node_library= source files. NOTE: due to how symlinks are handled in
+pants process output_digests you will not be able to reference the
+symlinked executable - the =pants:build= script should use node
+directly to evaluate the appropriate javascript file.
+
+Example:
+instead of
+#+BEGIN_SRC
+{
+  "name": "node_package",
+  ...
+  "scripts": {
+    "pants:build": "nuxt generate"
+  }
+  ...
+}
+#+END_SRC
+
+Please Use:
+#+BEGIN_SRC
+{
+  "name": "node_package",
+  ...
+  "scripts": {
+    "pants:build": "node node_modules/nxut/bin/nuxt.js generate"
+  }
+  ...
+}
+#+END_SRC
+
+For more information [[https://github.com/pantsbuild/pants/pull/15211#issuecomment-1135155501][please reference this github comment]].
+
+All paths in the =artifact_paths= field will then be output to
+=pants-distdir= (default =dist/=).
+
+You may include the built files in a [[https://github.com/compyman/pants-docker][​docker​]] build target by
+including the =node_package= target as a dependency to the =docker=
+target.
+
+NOTE:
+
+Please make sure you have generated a =package.lock= file in order to
+have reproducable builds, you may generate one by running:
+#+BEGIN_SRC shell
+  npm i --package-lock-only
+#+END_SRC
+
+* Changelog
+** 1.1.0
+2022-05-27
++ Changes how the build context is constructed
+  + [Breaking] The build context is now restricted to a subtree rooted
+    at the node_package definition, ensure the following when updating:
+    + That your node package does not include any source files
+      outside of its subtree.
+    + That your package.json & package-lock.json are located in
+      the same directory as the appropriate node_package definition.
+    + That your =pants:build= script does not reference the full
+      source path to the =node_package= target
++ [Breaking] The package.json & package-lock.json files are no longer
+  included automatically, ensure they are included in a =node_library=
+  target
++ [Breaking] Removed Symlinks from installed node_modules, ensure your
+  =pants:build= script references the appropriate executable js file
+  directly.
++ Added the [node] configuration scope with the following
+  configuration options, see =./pants help node= for details
+  + =use_nvm=
+  + =search_paths=
+
+** 1.0
+2022-03-08 (Released Internally)
++ Update to use Pantsbuild 2.9
+** 0.0.1
+2021-09-07
+Initial Release
++ Added node_library & node_package targets
++ Added rules to extract built files from node_package targets
+
+
+
+* LICENSE
+See COPYING for the text of the Apache License, which governs this package.
