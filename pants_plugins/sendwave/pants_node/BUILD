@@ -8,7 +8,7 @@ python_distribution(
     dependencies=[":pants_node_library"],
     provides=setup_py(
         name="sendwave-pants-node",
-        version="1.1.1",
+        version="1.1.2",
         description="Pants Plugin to build node bundles",
         url="https://github.com/compyman/pants-node",
         author="Nathan Rosenbloom, Jean Cochrane",
