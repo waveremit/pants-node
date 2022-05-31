@@ -109,13 +109,14 @@ async def get_node_search_paths(
 ) -> NPMPath:
     """Build NPMPath object from NodeSubsystem configuration."""
     use_nvm = node.options.use_nvm
+    search_paths = None
+
     if use_nvm:
         nvm_bin = await Get(Environment, EnvironmentRequest(["NVM_BIN"]))
         if nvm_bin:
             search_paths = [nvm_bin["NVM_BIN"], *node.options.search_paths]
-    else:
+    elif not search_paths:
         search_paths = tuple(node.options.search_paths)
-
     npm_paths = await Get(
         BinaryPaths,
         BinaryPathRequest(

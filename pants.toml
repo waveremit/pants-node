@@ -3,7 +3,7 @@
 pants_version="2.9.0"
 pythonpath = ["%(buildroot)s/pants_plugins"]
 plugins = [
-   "sendwave-pants-docker==1.0",
+   "sendwave-pants-docker~=1.0.0",
 ]
 
 backend_packages = [
@@ -27,3 +27,6 @@ interpreter_constraints = [">=3.9"]
 [anonymous-telemetry]
 enabled = true
 repo_id = "BB6CBFC17A66FAB02E3FA88C13113D25"
+
+[sendwave-docker]
+report_progress = true

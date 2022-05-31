@@ -3,7 +3,7 @@
 #+EMAIL:       engineering@sendwave.com
 #+DESCRIPTION: Node Plugin Documentation
 
-* Version 1.1.1
+* Version 1.1.2
 
 This package contains a plugin for the [[https://www.pantsbuild.org/][pants build system]] to run npm
 based scripts from pants build targets
@@ -103,6 +103,9 @@ have reproducable builds, you may generate one by running:
 #+END_SRC
 
 * Changelog
+** 1.1.2
+2022-05-07
++ Bug fix: prevent crash if use_nvm is enabled but nvm is not in use.
 ** 1.1.1
 2022-05-27
 + Change Dependency on sendwave-pants-docker from a link hosted on
