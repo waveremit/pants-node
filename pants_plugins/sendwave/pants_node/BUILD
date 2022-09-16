@@ -1,6 +1,6 @@
 python_sources(
     name="pants_node_library",
-    dependencies=["pants_plugins:pants", "//:sendwave-pants-docker"],
+    dependencies=["pants_plugins:pants"],
 )
 
 python_distribution(
