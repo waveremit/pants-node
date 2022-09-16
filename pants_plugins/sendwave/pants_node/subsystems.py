@@ -1,6 +1,7 @@
 """Sendwave pants-node Options."""
 
 from pants.engine.rules import SubsystemRule
+from pants.option.option_types import StrListOption, BoolOption
 from pants.option.subsystem import Subsystem
 
 
@@ -24,24 +25,17 @@ class NodeSubsystem(Subsystem):
     options_scope = "node"
     help = "Node Options."
 
-    @classmethod
-    def register_options(cls, register):
-        """Register Sendwave pants-node options."""
-        super().register_options(register)
-        register(
-            "--search-paths",
-            type=list,
-            member_type=str,
-            default=["/bin", "/usr/bin/"],
-            help="Directories in which to search for node binaries.'",
-        )
-        register(
-            "--use-nvm",
-            type=bool,
-            default=True,
-            help="If true, the value of $NVM_BIN will be "
-            "appended to the front of the search path.",
-        )
+    search_paths = StrListOption(
+        "--search-paths",
+        default=["/bin", "/usr/bin/"],
+        help="Directories in which to search for node binaries.'",
+    )
+    use_nvm = BoolOption(
+        "--use-nvm",
+        default=True,
+        help="If true, the value of $NVM_BIN will be "
+             "appended to the front of the search path.",
+    )
 
 
 def rules():

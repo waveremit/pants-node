@@ -1,10 +1,7 @@
 
 [GLOBAL]
-pants_version="2.9.0"
+pants_version="2.13.0"
 pythonpath = ["%(buildroot)s/pants_plugins"]
-plugins = [
-   "sendwave-pants-docker~=1.0.0",
-]
 
 backend_packages = [
                  "pants.backend.plugin_development",
@@ -12,8 +9,8 @@ backend_packages = [
                  "pants.backend.python.lint.docformatter",
                  "pants.backend.python.lint.black",
                  "pants.backend.python.lint.isort" ,
+                 "pants.backend.docker",
                  "sendwave.pants_node",
-                 "sendwave.pants_docker"
                  ]
 [source]
 root_patterns = ["/pants_plugins", "/test_webpack"]
@@ -28,5 +25,5 @@ interpreter_constraints = [">=3.9"]
 enabled = true
 repo_id = "BB6CBFC17A66FAB02E3FA88C13113D25"
 
-[sendwave-docker]
-report_progress = true
+[docker]
+build_verbose = true

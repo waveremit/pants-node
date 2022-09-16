@@ -20,7 +20,6 @@ pyparsing==3.0.7
 pytest==6.2.5
 PyYAML==6.0
 requests==2.27.1
-sendwave-pants-docker==1.0
 setproctitle==1.2.2
 setuptools==56.0.0
 six==1.16.0

@@ -7,9 +7,12 @@ node_package(
     artifact_paths=["public/bundle"]
 )
 
-docker(
-        name="docker_with_weback_bundle",
-        base_image="python:3.9.1-slim-buster",
-        command=["/bin/bash",],
-        dependencies=[":test_bundle",]
+docker_image(
+    name="docker_with_webpack_bundle",
+    instructions=[
+        "FROM python:3.9.1-slim-buster",
+        "COPY public /public",
+        "CMD /bin/bash",
+    ],
+    dependencies=[":test_bundle",]
 )
