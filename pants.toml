@@ -1,10 +1,13 @@
 
 [GLOBAL]
-pants_version="2.9.0"
+pants_version="2.13.0"
+
+use_deprecated_directory_cli_args_semantics = false
+use_deprecated_pex_binary_run_semantics = false
+
 pythonpath = ["%(buildroot)s/pants_plugins"]
-plugins = [
-   "sendwave-pants-docker~=1.0.0",
-]
+plugins = ['sendwave-pants-docker==1.1.0']
+
 
 backend_packages = [
                  "pants.backend.plugin_development",
@@ -15,14 +18,20 @@ backend_packages = [
                  "sendwave.pants_node",
                  "sendwave.pants_docker"
                  ]
+
 [source]
-root_patterns = ["/pants_plugins", "/test_webpack"]
+root_patterns = ["/pants_plugins", "/", "/test_webpack"]
 
 [node]
 use_nvm = true
 
+[python-bootstrap]
+search_path = ["<PYENV>"]
+
 [python]
-interpreter_constraints = [">=3.9"]
+tailor_pex_binary_targets = false
+interpreter_constraints = ["==3.9.*"]
+
 
 [anonymous-telemetry]
 enabled = true

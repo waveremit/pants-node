@@ -1,6 +1,6 @@
 python_sources(
     name="pants_node_library",
-    dependencies=["pants_plugins:pants", "//:sendwave-pants-docker"],
+    dependencies=["pants_plugins:pants", "//:reqs#sendwave-pants-docker"],
 )
 
 python_distribution(
@@ -8,9 +8,9 @@ python_distribution(
     dependencies=[":pants_node_library"],
     provides=setup_py(
         name="sendwave-pants-node",
-        version="1.1.3",
+        version="1.2.0",
         description="Pants Plugin to build node bundles",
-        url="https://github.com/compyman/pants-node",
+        url="https://github.com/waveremit/pants-node",
         author="Nathan Rosenbloom, Jean Cochrane",
         author_email="engineering@sendwave.com",
     ),
