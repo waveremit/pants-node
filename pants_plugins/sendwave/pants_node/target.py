@@ -1,15 +1,29 @@
 from dataclasses import dataclass
 
 import pants.core.goals.package
-from pants.core.goals.package import (BuiltPackage, BuiltPackageArtifact,
-                                      OutputPathField, PackageFieldSet)
-from pants.engine.target import (COMMON_TARGET_FIELDS, Dependencies,
-                                 DependenciesRequest, DescriptionField,
-                                 HydratedSources, HydrateSourcesRequest,
-                                 MultipleSourcesField,
-                                 SpecialCasedDependencies, StringField,
-                                 StringSequenceField, Tags, Target, Targets,
-                                 TransitiveTargets, TransitiveTargetsRequest)
+from pants.core.goals.package import (
+    BuiltPackage,
+    BuiltPackageArtifact,
+    OutputPathField,
+    PackageFieldSet,
+)
+from pants.engine.target import (
+    COMMON_TARGET_FIELDS,
+    Dependencies,
+    DependenciesRequest,
+    DescriptionField,
+    HydratedSources,
+    HydrateSourcesRequest,
+    MultipleSourcesField,
+    SpecialCasedDependencies,
+    StringField,
+    StringSequenceField,
+    Tags,
+    Target,
+    Targets,
+    TransitiveTargets,
+    TransitiveTargetsRequest,
+)
 from pants.engine.unions import UnionRule
 
 

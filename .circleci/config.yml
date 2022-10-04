@@ -7,6 +7,14 @@ workflows:
     # see the configuration docs: https://circleci.com/docs/2.0/configuration-reference/#workflows
     jobs:
       - build-plugin-wheel
+      - pants-checks
+
+executors:
+  plugin-executor:
+    docker:
+    - image: cimg/python:3.9.13
+      environment:
+          PANTS_CONFIG_FILES: pants.ci.toml
 
 
 commands:
@@ -36,11 +44,17 @@ commands:
             - ~/.cache/pants
 
 jobs:
+  pants-checks:
+    executor: plugin-executor
+    steps:
+      - setup-pants
+      - run:
+          command: './pants update-build-files --check ::'
+      - run:
+          command: './pants lint ::'
+      - save-pants-cache
   build-plugin-wheel:
-    environment:
-      PANTS_CONFIG_FILES: pants.ci.toml
-    docker:
-      - image: cimg/python:3.9.7
+    executor: plugin-executor
     steps:
       - setup-pants
       - run:
