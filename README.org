@@ -10,7 +10,7 @@ based scripts from pants build targets
 
 *  Requirements
 
-This plugin supports pantsbuild 2.9 and requires python >=3.9 to be
+This plugin supports pantsbuild 2.9 and requires python >=3.8 to be
 installed. It also requires the [[https://github.com/compyman/pants-docker][pants-docker plugin]] so that a
 =npm_package= may be included as dependencies to docker
 images
