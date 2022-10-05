@@ -30,7 +30,7 @@ search_path = ["<PYENV>"]
 
 [python]
 tailor_pex_binary_targets = false
-interpreter_constraints = ["==3.9.*"]
+interpreter_constraints = [">=3.8"]
 
 
 [anonymous-telemetry]
