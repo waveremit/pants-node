@@ -3,14 +3,14 @@
 #+EMAIL:       engineering@sendwave.com
 #+DESCRIPTION: Node Plugin Documentation
 
-* Version 1.2.1
+* Version 1.2.2
 
 This package contains a plugin for the [[https://www.pantsbuild.org/][pants build system]] to run npm
 based scripts from pants build targets
 
 *  Requirements
 
-This plugin supports pantsbuild 2.9 and requires python >=3.8 to be
+This plugin supports pantsbuild 2.13 and requires python >=3.8 to be
 installed. It also requires the [[https://github.com/compyman/pants-docker][pants-docker plugin]] so that a
 =npm_package= may be included as dependencies to docker
 images
@@ -103,6 +103,9 @@ have reproducable builds, you may generate one by running:
 #+END_SRC
 
 * Changelog
+** 1.2.2
+2022-10-05
++ Loosen pants-docker plugin requirements
 ** 1.2.1
 2022-10-05
 + Relax interpret constraint to allow python >=3.8
