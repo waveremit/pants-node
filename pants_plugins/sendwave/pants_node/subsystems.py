@@ -26,7 +26,7 @@ class NodeSubsystem(Subsystem):
     help = "Node Options."
     search_paths = StrListOption(
         "--search-paths",
-        default=["/bin", "/usr/bin/"],
+        default=["/bin/", "/usr/bin/", "/usr/local/bin/"],
         help="Directories in which to search for node binaries.",
     )
 
