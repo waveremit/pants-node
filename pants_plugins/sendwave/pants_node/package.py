@@ -133,10 +133,7 @@ async def get_node_search_paths(
             search_paths.insert(0, nvm_bin["NVM_BIN"])
     npm_paths = await Get(
         BinaryPaths,
-        BinaryPathRequest(
-            binary_name="npm",
-            search_path=tuple(search_paths)
-        ),
+        BinaryPathRequest(binary_name="npm", search_path=tuple(search_paths)),
     )
     if not npm_paths.first_path:
         raise ValueError(
