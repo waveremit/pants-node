@@ -12,7 +12,6 @@ plugins = ['sendwave-pants-docker==1.1.0']
 backend_packages = [
                  "pants.backend.plugin_development",
                  "pants.backend.python",
-                 "pants.backend.python.lint.docformatter",
                  "pants.backend.python.lint.black",
                  "pants.backend.python.lint.isort" ,
                  "sendwave.pants_node",
